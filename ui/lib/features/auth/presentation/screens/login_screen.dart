@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ui/core/theme/app_theme.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -8,72 +10,59 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar( 
         title: const Text('Login'),
-        backgroundColor: Colors.deepPurple,
       ),
       
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.lock,
-              size: 80,
-              color: Colors.deepPurple,
+              size: 80.r,
+              color: AppTheme.primaryColor,
             ),
             
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             
-            const Text(
+            Text(
               'Welcome Back!',
               
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
-              ),
+              style: AppTheme.headingMedium
             ),
             
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
             
             
-            const Text(
+            Text(
               'Please sign in to continue',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: AppTheme.bodyLarge,
             ),
             
-            const SizedBox(height: 40),
+            SizedBox(height: 40.h),
             
             Padding( 
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: EdgeInsets.symmetric(horizontal: 32.w),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Email',
                   prefixIcon: const Icon(Icons.email),
       
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                 ),
                 
                 keyboardType: TextInputType.emailAddress,
               ),
             ),
             
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             
             
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: EdgeInsets.symmetric(horizontal: 32.w),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  
                 ),
                 
                 obscureText: true,
@@ -82,30 +71,18 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
 
             SizedBox(
-              width: 200,
-              height: 50,
+              width: 200.w,
+              height: 50.h,
               child: ElevatedButton(
                 onPressed: () {
                   print('Login button tapped!');
                 },
                 
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                
                 child: const Text(
                   'LOGIN',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
             ),
