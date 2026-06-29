@@ -33,12 +33,12 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           
           children: [
-            // Company Logo Icon
-            Icon(
-              Icons.fingerprint,
-              size: 120.r,  
-              color: Colors.white,
-            ),
+            // Logo
+            Image.asset(
+                'assets/images/TraBSLogo.png', 
+                 height: 200.h,
+                ),
+              
             
             SizedBox(height: 24.h),  // Spacing
             

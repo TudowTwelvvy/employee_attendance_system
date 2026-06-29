@@ -66,11 +66,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 
                 children: [
                   // Logo
-                  Icon(
-                    Icons.fingerprint,
-                    size: 80.r,
-                    color: AppTheme.primaryColor,
-                  ),
+                 Image.asset(
+                     'assets/images/TraBSLogo.png', 
+                      height: 150.h,
+                    ),
+              
                   
                   SizedBox(height: 24.h),
                   
