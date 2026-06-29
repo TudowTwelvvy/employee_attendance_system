@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ui/core/router/app_router.dart';
 import 'package:ui/core/theme/app_theme.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -78,7 +80,7 @@ class LoginScreen extends StatelessWidget {
               height: 50.h,
               child: ElevatedButton(
                 onPressed: () {
-                  print('Login button tapped!');
+                  context.go(AppRouter.home);
                 },
                 
                 child: const Text(
