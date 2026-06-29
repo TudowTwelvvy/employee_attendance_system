@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 
 
@@ -30,12 +31,7 @@ class AppRouter {
       GoRoute(
         path: splash,           //the URL path: '/'
         name: 'splash',         //Named route for reference
-        builder: (context, state) {
-    
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        },
+        builder: (context, state) => const SplashScreen(),
       ),
       
       // Login Screen
