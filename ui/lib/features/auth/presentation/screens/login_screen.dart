@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/core/widgets/custom_card.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (mounted) {
-      context.go(AppRouter.adminDashboard);
+      context.go(AppRouter.home);
     }
   }
 
@@ -69,6 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                  Image.asset(
                      'assets/images/TraBSLogo.png', 
                       height: 150.h,
+                      width: 150.w,
+                      fit: BoxFit.contain,
                     ),
               
                   
@@ -93,50 +96,54 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 32.h),
                   
                   // Email Field
-                  TextFormField(
-                    controller: _emailController,
-                    
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
+                  CustomCard(
+                    child: TextFormField(
+                      controller: _emailController,
+                      
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email),
+                      ),
+                      
+                      keyboardType: TextInputType.emailAddress,
+                      
+                      // Validator = checks if input is valid
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;  // Valid!
+                      },
                     ),
-                    
-                    keyboardType: TextInputType.emailAddress,
-                    
-                    // Validator = checks if input is valid
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;  // Valid!
-                    },
                   ),
                   
                   SizedBox(height: 16.h),
                   
                   // Password Field
-                  TextFormField(
-                    controller: _passwordController,
-                    
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
+                  CustomCard(
+                    child: TextFormField(
+                      controller: _passwordController,
+                      
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        prefixIcon: Icon(Icons.lock),
+                      ),
+                      
+                      obscureText: true,  // Hide password
+                      
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
-                    
-                    obscureText: true,  // Hide password
-                    
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
                   ),
                   
                   SizedBox(height: 8.h),

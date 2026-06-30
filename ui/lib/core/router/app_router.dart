@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/core/theme/app_theme.dart';
 import 'package:ui/features/admin/presentation/screens/dashboard_screen.dart';
+import 'package:ui/features/auth/presentation/screens/register_screen.dart';
 import 'package:ui/features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 
@@ -46,17 +48,30 @@ class AppRouter {
       GoRoute(
         path: register,
         name: 'register',
-        builder: (context, state) => const Scaffold(
-          body: Center(child: Text('Register Screen - Coming Soon')),
-        ),
+        builder: (context, state) => const RegisterScreen(),
       ),
       
       // Home Screen
       GoRoute(
         path: home,
         name: 'home',
-        builder: (context, state) => const Scaffold(
-          body: Center(child: Text('Home Screen - Coming Soon')),
+        builder: (context, state) =>  Scaffold(
+          body:  Center(
+            child: FloatingActionButton(
+              onPressed: () {
+                print('Scan QR!');
+              },
+              
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              
+              // Shape options:
+              shape: CircleBorder(),  // Circular (default)
+              // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+              
+              child: const Icon(Icons.qr_code_scanner),
+            ),
+          )
         ),
       ),
       
