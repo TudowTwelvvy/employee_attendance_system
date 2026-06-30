@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (mounted) {
-      context.go(AppRouter.home);
+      context.go(AppRouter.adminDashboard);
     }
   }
 

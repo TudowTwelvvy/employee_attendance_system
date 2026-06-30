@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/features/admin/presentation/screens/dashboard_screen.dart';
 import 'package:ui/features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 
@@ -85,6 +86,13 @@ class AppRouter {
           body: Center(child: Text('History Screen - Coming Soon')),
         ),
       ),
+
+      GoRoute(
+        path: adminDashboard ,
+        name: 'adminDashboard ',
+        builder: (context, state) => const DashboardScreen(),
+        ),
+      
     ],
     
     // Error page - shown when URL doesn't match any route
