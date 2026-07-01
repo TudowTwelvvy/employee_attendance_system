@@ -65,7 +65,6 @@ class AppRouter {
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
               
-              // Shape options:
               shape: CircleBorder(),  // Circular (default)
               // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
               

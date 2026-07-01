@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ui/core/widgets/custom_card.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../providers/auth_provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
-  // Used to validate all fields at once
-  final _formKey = GlobalKey<FormState>();
-  
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -30,43 +26,33 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) {
-      return; 
-    }
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
 
-    await Future.delayed(const Duration(seconds: 2));
+    await ref.read(authProvider.notifier).login(email, password);
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (mounted) {
+    final authState = ref.read(authProvider);
+    if (authState.isLoggedIn && mounted) {
       context.go(AppRouter.home);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Form(
-              // Form = groups multiple form fields together
-              // Enables validation of all fields at once
-              key: _formKey,
-              
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                
-                children: [
-                  // Logo
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(24.w),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                 // Logo
                  Image.asset(
                      'assets/images/TraBSLogo.png', 
                       height: 150.h,
@@ -74,133 +60,85 @@ class _LoginScreenState extends State<LoginScreen> {
                       fit: BoxFit.contain,
                     ),
               
-                  
-                  SizedBox(height: 24.h),
-                  
-                  // Title
-                  Text(
-                    'Welcome Back!',
-                    style: AppTheme.headingMedium,
-                    textAlign: TextAlign.center,
+                SizedBox(height: 24.h),
+                Text(
+                  'Welcome Back!',
+                  style: AppTheme.headingMedium,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  'Sign in to your account',
+                  style: AppTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 32.h),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email),
                   ),
-                  
-                  SizedBox(height: 8.h),
-                  
-                  // Subtitle
-                  Text(
-                    'Sign in to your account',
-                    style: AppTheme.bodyLarge,
-                    textAlign: TextAlign.center,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) return 'Email is required';
+                    if (!value!.contains('@')) return 'Invalid email';
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.h),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock),
                   ),
-                  
-                  SizedBox(height: 32.h),
-                  
-                  // Email Field
-                  CustomCard(
-                    child: TextFormField(
-                      controller: _emailController,
-                      
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email),
-                      ),
-                      
-                      keyboardType: TextInputType.emailAddress,
-                      
-                      // Validator = checks if input is valid
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;  // Valid!
-                      },
+                  obscureText: true,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) return 'Password is required';
+                    if (value!.length < 6) return 'Password too short';
+                    return null;
+                  },
+                ),
+                SizedBox(height: 8.h),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text('Forgot Password?'),
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                if (authState.errorMessage != null)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16.h),
+                    child: Text(
+                      authState.errorMessage!,
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  
-                  SizedBox(height: 16.h),
-                  
-                  // Password Field
-                  CustomCard(
-                    child: TextFormField(
-                      controller: _passwordController,
-                      
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: Icon(Icons.lock),
-                      ),
-                      
-                      obscureText: true,  // Hide password
-                      
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
+                SizedBox(
+                  height: 50.h,
+                  child: ElevatedButton(
+                    onPressed: authState.isLoading ? null : _login,
+                    child: authState.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text('LOGIN'),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account? ", style: AppTheme.bodyMedium),
+                    TextButton(
+                      onPressed: () => context.push(AppRouter.register),
+                      child: const Text('Register'),
                     ),
-                  ),
-                  
-                  SizedBox(height: 8.h),
-                  
-                  // Forgot Password
-                  Align(
-                    // Align = positions child within available space
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        //nagivate too forgotpassword
-                      },
-                      child: const Text('Forgot Password?'),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 24.h),
-                  
-                  // Login Button
-                  SizedBox(
-                    height: 50.h,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _login,
-      
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text('LOGIN'),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 16.h),
-                  
-                  // Register Link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account? ",
-                        style: AppTheme.bodyMedium,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          context.push(AppRouter.register);
-                        },
-                        child: const Text('Register'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
