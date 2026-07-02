@@ -134,6 +134,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 extra: {
                   'siteId': result.siteId,
                   'siteName': result.siteName,
+                  'latitude': result.latitude,
+                  'longitude': result.longitude,
+                  'radiusInMeters': result.radiusInMeters,
                 },
               );
             },

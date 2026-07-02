@@ -46,6 +46,10 @@ class AppRouter {
           return AttendanceConfirmationScreen(
             siteId: extra?['siteId'] ?? 'unknown',
             siteName: extra?['siteName'] ?? 'Unknown Site',
+            siteLatitude: extra?['latitude'] ?? 0.0,
+            siteLongitude: extra?['longitude'] ?? 0.0,
+            radiusInMeters: extra?['radiusInMeters'] ?? 100.0,
+
           );
         },
       ),

@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+     //GPS permissions
+	 <key>NSLocationWhenInUseUsageDescription</key>
+     <string>This app needs your location to verify you are at the work site.</string>
+     <key>NSLocationAlwaysUsageDescription</key>
+     <string>This app needs your location to track attendance at work sites.</string>
+	
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

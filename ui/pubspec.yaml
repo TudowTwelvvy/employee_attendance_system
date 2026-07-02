@@ -52,7 +52,7 @@ dependencies:
   mobile_scanner: ^5.1.1
 
   # GPS Location
-  geolocator: ^11.0.0
+  geolocator: ^12.0.0
 
   # Device Information
   device_info_plus: ^10.1.0

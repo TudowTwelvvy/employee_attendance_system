@@ -1,56 +1,65 @@
 import '../models/qr_validation_result.dart';
 
-/// MockQRService simulates QR code validation without a real API.
-/// 
-/// Think of this as a "fake security guard" it checks name tags
-/// against a list it memorized, instead of calling the real office.
-/// 
-/// In production, this would call the ASP.NET API to check if the
-/// QR code belongs to a valid work site.
+/// MockQRService simulates QR code validation with location data.
 class MockQRService {
-  
-  static final Map<String, Map<String, String>> _validQRCodes = {
+  /// Mock database of valid QR codes with GPS coordinates
+  /// 
+  /// Each site now has:
+  /// - siteId, siteName (from before)
+  /// - latitude, longitude (center of the site)
+  /// - radiusInMeters (geofence size)
+  static final Map<String, Map<String, dynamic>> _validQRCodes = {
     'SITE-HQ-001': {
       'siteId': 'site_001',
       'siteName': 'Head Office',
+      'latitude': -25.7479,  // Pretoria, South Africa (example)
+      'longitude': 28.2293,
+      'radiusInMeters': 100.0, // Must be within 100 meters
     },
     'SITE-A-002': {
       'siteId': 'site_002',
       'siteName': 'Construction Site A',
+      'latitude': -25.7600,
+      'longitude': 28.2400,
+      'radiusInMeters': 200.0, // Larger area for construction
     },
     'SITE-B-003': {
       'siteId': 'site_003',
       'siteName': 'Warehouse B',
+      'latitude': -25.7300,
+      'longitude': 28.2100,
+      'radiusInMeters': 150.0,
     },
     '6009710723586': {
       'siteId': 'site_004',
-      'siteName': 'Warehouse ysg',
+      'siteName': 'Warehouse Twelvvy',
+      'latitude': -25.85891,  // Pretoria, South Africa (example)
+      'longitude': 28.18577,
+      'radiusInMeters': 30000.0,
     },
   };
 
-
   static Future<QrValidationResult> validateQrCode(String qrValue) async {
-    // Simulate API call delay — makes it feel real
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // Look up the QR code in our mock database
     final siteData = _validQRCodes[qrValue];
 
     if (siteData != null) {
-      // Found! Return success
       return QrValidationResult.valid(
-        siteId: siteData['siteId']!,
-        siteName: siteData['siteName']!,
+        siteId: siteData['siteId'] as String,
+        siteName: siteData['siteName'] as String,
+        //Pass location data for geofence check
+        latitude: siteData['latitude'] as double,
+        longitude: siteData['longitude'] as double,
+        radiusInMeters: siteData['radiusInMeters'] as double,
       );
     }
 
-    // Not found! Return failure
     return QrValidationResult.invalid(
       'Invalid QR code: "$qrValue" is not registered to any site.',
     );
   }
 
-  /// Get list of mock QR codes for testing
   static List<String> getMockQRCodes() {
     return _validQRCodes.keys.toList();
   }
