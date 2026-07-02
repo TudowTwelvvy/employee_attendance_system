@@ -10,17 +10,15 @@ class RegisterUseCase {
     required String fullName,
     required String email,
     required String password,
-    required String confirmPassword,
   }) async {
-    // Validation
-    if (fullName.isEmpty) throw Exception('Name is required');
-    if (email.isEmpty) throw Exception('Email is required');
-    if (password.isEmpty) throw Exception('Password is required');
-    if (password != confirmPassword) {
-      throw Exception('Passwords do not match');
+    if (fullName.isEmpty) {
+      throw Exception('Name cannot be empty');
     }
-    if (password.length < 8) {
-      throw Exception('Password must be at least 8 characters');
+    if (email.isEmpty || !email.contains('@')) {
+      throw Exception('Invalid email');
+    }
+    if (password.length < 6) {
+      throw Exception('Password must be at least 6 characters');
     }
 
     return await _repository.register(fullName, email, password);

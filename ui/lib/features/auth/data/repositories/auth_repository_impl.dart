@@ -5,7 +5,6 @@ import '../datasources/auth_remote_datasource.dart';
 import '../models/login_request_model.dart';
 
 /// AuthRepositoryImpl implements the AuthRepository contract.
-/// 
 /// It connects the Domain layer (business logic) with the Data layer (API calls).
 /// This is where the actual work happens.
 class AuthRepositoryImpl implements AuthRepository {
@@ -68,8 +67,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final userId = await SecureStorage.getUserId();
     if (userId == null) return null;
 
-    // In a real app, you'd fetch user data from API
-    // For now, return a placeholder
+    // In a real app... fetch user data from API
+    // For now i return a placeholder
     return UserEntity(
       id: userId,
       email: '',

@@ -1,7 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+
 class SecureStorage {
-  // Private constructor...singleton pattern
+  // Private constructor — singleton pattern
   SecureStorage._();
   static final SecureStorage _instance = SecureStorage._();
   factory SecureStorage() => _instance;
@@ -9,10 +10,10 @@ class SecureStorage {
   // The secure storage instance
   static const _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,  // Use encrypted shared prefs
+      encryptedSharedPreferences: true,
     ),
     iOptions: IOSOptions(
-      accountName: 'flutter_secure_storage',  // Keychain account
+      accountName: 'flutter_secure_storage',
     ),
   );
 

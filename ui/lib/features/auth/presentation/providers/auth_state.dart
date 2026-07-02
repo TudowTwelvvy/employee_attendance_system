@@ -12,3 +12,10 @@ class AuthState with _$AuthState {
     UserEntity? user,
   }) = _AuthState;
 }
+/// AuthState represents the complete authentication state.
+/// 
+/// It tracks:
+/// isLoading: Show spinner?
+/// isLoggedIn: Is user authenticated?
+/// user: Current user data
+/// errorMessage: Any error to display

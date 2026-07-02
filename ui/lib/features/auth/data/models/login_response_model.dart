@@ -16,7 +16,8 @@ class LoginResponseModel {
     required this.user,
   });
 
-  /// Create from JSON (API response)
+  //Create from JSON (API response)
+  //The API returns nested JSON. We extract data from the 'data' key.
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
       success: json['success'] ?? false,
@@ -28,12 +29,7 @@ class LoginResponseModel {
   }
 }
 
-/// UserModel represents user data from API.
-/// 
-/// This is different from UserEntity because:
-/// - It has JSON serialization (toJson/fromJson)
-/// - It may have API-specific fields
-/// - It lives in the Data layer
+/// UserModel represents user data from API.is different from UserEntity
 class UserModel {
   final String id;
   final String email;
@@ -56,10 +52,8 @@ class UserModel {
     );
   }
 
-  /// Convert to Domain Entity
-  /// 
-  /// This is the bridge between Data layer and Domain layer.
-  /// The Domain layer doesn't know about JSON or Models.
+  /// Convert to Domain Entity... This is the bridge between Data layer and Domain layer.
+  
   UserEntity toEntity() {
     return UserEntity(
       id: id,

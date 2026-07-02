@@ -18,7 +18,7 @@ class UserEntity {
   /// Check if user is a manager
   bool get isManager => role == 'Manager';
 
-  /// Check if user is a regular employee
+  /// Check if user is a employee
   bool get isEmployee => role == 'Employee';
 
   /// Get display name (first name only)
