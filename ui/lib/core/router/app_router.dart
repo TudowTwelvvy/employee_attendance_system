@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/features/attendance/presentation/screens/attendance_history_screen.dart';
 import '../../features/attendance/presentation/screens/attendance_confirmation_screen.dart';
 import '../../features/attendance/presentation/screens/qr_scanner_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -63,7 +64,7 @@ class AppRouter {
       GoRoute(
         path: attendanceHistory,
         name: 'attendanceHistory',
-        builder: (context, state) => const Scaffold(body: Center(child: Text('History - Coming Soon'))),
+        builder: (context, state) => const AttendanceHistoryScreen(),
       ),
       GoRoute(
         path: adminDashboard,
