@@ -3,7 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../data/datasources/mock_attendance_service.dart';
+import '../../data/models/attendance_record_model.dart';
+import '../providers/device_info_provider.dart';
 import '../providers/location_provider.dart';
+
 
 class AttendanceConfirmationScreen extends ConsumerStatefulWidget {
   final String siteId;
@@ -22,30 +27,40 @@ class AttendanceConfirmationScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<AttendanceConfirmationScreen> createState() => _AttendanceConfirmationScreenState();
+  ConsumerState<AttendanceConfirmationScreen> createState() =>
+      _AttendanceConfirmationScreenState();
 }
 
-class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirmationScreen> {
+class _AttendanceConfirmationScreenState
+    extends ConsumerState<AttendanceConfirmationScreen> {
   @override
   void initState() {
     super.initState();
-    
-    // Get GPS location as soon as screen opens
+
+    // Wait for first frame to complete before calling providers
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Get GPS location as soon as screen opens
       ref.read(locationProvider.notifier).getLocationAndValidate(
-        siteLatitude: widget.siteLatitude,
-        siteLongitude: widget.siteLongitude,
-        radiusInMeters: widget.radiusInMeters,
-      );
+            siteLatitude: widget.siteLatitude,
+            siteLongitude: widget.siteLongitude,
+            radiusInMeters: widget.radiusInMeters,
+          );
+
+      // Get device info
+      ref.read(deviceInfoProvider.notifier).loadDeviceInfo();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch location state for updates
+    // Watch states for UI updates
     final locationState = ref.watch(locationProvider);
+    final deviceState = ref.watch(deviceInfoProvider);
+
+    // Format current date and time
     final now = DateTime.now();
-    final timeString = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    final timeString =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
     final dateString = '${now.day}/${now.month}/${now.year}';
 
     return Scaffold(
@@ -56,24 +71,38 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(Icons.check_circle, size: 80.r, color: Colors.green),
+              // Success icon
+              Icon(
+                Icons.check_circle,
+                size: 80.r,
+                color: Colors.green,
+              ),
               SizedBox(height: 16.h),
-              Text('Attendance Check-In', style: AppTheme.headingMedium, textAlign: TextAlign.center),
+
+              // Title
+              Text(
+                'Attendance Check-In',
+                style: AppTheme.headingMedium,
+                textAlign: TextAlign.center,
+              ),
               SizedBox(height: 24.h),
 
-              // Site info
+              // Site info card
               _InfoCard(
                 title: 'Work Site',
                 icon: Icons.location_on,
                 children: [
                   _InfoRow(label: 'Site Name', value: widget.siteName),
                   _InfoRow(label: 'Site ID', value: widget.siteId),
-                  _InfoRow(label: 'Allowed Radius', value: '${widget.radiusInMeters}m'),
+                  _InfoRow(
+                    label: 'Allowed Radius',
+                    value: '${widget.radiusInMeters}m',
+                  ),
                 ],
               ),
               SizedBox(height: 16.h),
 
-              // Date & Time
+              // Date and Time card
               _InfoCard(
                 title: 'Date & Time',
                 icon: Icons.access_time,
@@ -84,36 +113,42 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
               ),
               SizedBox(height: 16.h),
 
-              // GPS Location — REAL DATA NOW!
+              // GPS Location — REAL DATA
               _InfoCard(
                 title: 'GPS Location',
                 icon: Icons.gps_fixed,
                 children: [
                   if (locationState.isLoading)
-                    const Center(child: CircularProgressIndicator())
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
                   else if (locationState.errorMessage != null)
                     Text(
                       locationState.errorMessage!,
-                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14.sp,
+                      ),
                     )
-                  else ...[
+                  else if (locationState.position != null) ...[
+                    // Real coordinates
                     _InfoRow(
                       label: 'Your Latitude',
-                      value: locationState.position != null 
-                          ? '${locationState.position!.latitude.toStringAsFixed(6)}°'
-                          : 'Unknown',
+                      value:
+                          '${locationState.position!.latitude.toStringAsFixed(6)}°',
                     ),
                     _InfoRow(
                       label: 'Your Longitude',
-                      value: locationState.position != null
-                          ? '${locationState.position!.longitude.toStringAsFixed(6)}°'
-                          : 'Unknown',
+                      value:
+                          '${locationState.position!.longitude.toStringAsFixed(6)}°',
                     ),
                     _InfoRow(
                       label: 'Accuracy',
-                      value: locationState.position != null
-                          ? '${locationState.position!.accuracy.toStringAsFixed(1)} meters'
-                          : 'Unknown',
+                      value:
+                          '${locationState.position!.accuracy.toStringAsFixed(1)} meters',
                     ),
                     _InfoRow(
                       label: 'Distance from Site',
@@ -122,23 +157,30 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
                           : 'Unknown',
                     ),
                     SizedBox(height: 8.h),
-                    // Geofence status
+
+                    // Geofence status banner
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: locationState.isWithinGeofence 
+                        color: locationState.isWithinGeofence
                             ? Colors.green.withOpacity(0.1)
                             : Colors.red.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: locationState.isWithinGeofence ? Colors.green : Colors.red,
+                          color: locationState.isWithinGeofence
+                              ? Colors.green
+                              : Colors.red,
                         ),
                       ),
                       child: Row(
                         children: [
                           Icon(
-                            locationState.isWithinGeofence ? Icons.check_circle : Icons.error,
-                            color: locationState.isWithinGeofence ? Colors.green : Colors.red,
+                            locationState.isWithinGeofence
+                                ? Icons.check_circle
+                                : Icons.error,
+                            color: locationState.isWithinGeofence
+                                ? Colors.green
+                                : Colors.red,
                           ),
                           SizedBox(width: 8.w),
                           Expanded(
@@ -147,7 +189,9 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
                                   ? '✅ Within geofence — You are at the site!'
                                   : '❌ Outside geofence — You are too far from the site!',
                               style: TextStyle(
-                                color: locationState.isWithinGeofence ? Colors.green : Colors.red,
+                                color: locationState.isWithinGeofence
+                                    ? Colors.green
+                                    : Colors.red,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14.sp,
                               ),
@@ -156,28 +200,67 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
                         ],
                       ),
                     ),
-                  ],
+                  ] else
+                    const _InfoRow(
+                      label: 'Status',
+                      value: 'Location unavailable',
+                    ),
                 ],
               ),
               SizedBox(height: 16.h),
 
-              // Device info (still mock — next lesson)
+              // Device Information with real data
               _InfoCard(
                 title: 'Device Information',
                 icon: Icons.phone_android,
-                children: const [
-                  _InfoRow(label: 'Device', value: 'Samsung Galaxy S21'),
-                  _InfoRow(label: 'OS', value: 'Android 14'),
-                  _InfoRow(label: 'App Version', value: '1.0.0'),
+                children: [
+                  if (deviceState.isLoading)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (deviceState.errorMessage != null)
+                    Text(
+                      deviceState.errorMessage!,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14.sp,
+                      ),
+                    )
+                  else if (deviceState.deviceInfo != null) ...[
+                    _InfoRow(
+                      label: 'Device',
+                      value: deviceState.deviceInfo!.deviceName,
+                    ),
+                    _InfoRow(
+                      label: 'Model',
+                      value: deviceState.deviceInfo!.deviceModel,
+                    ),
+                    _InfoRow(
+                      label: 'OS',
+                      value:
+                          '${deviceState.deviceInfo!.operatingSystem} ${deviceState.deviceInfo!.osVersion}',
+                    ),
+                    _InfoRow(
+                      label: 'App Version',
+                      value: deviceState.deviceInfo!.appVersion,
+                    ),
+                  ] else
+                    const _InfoRow(
+                      label: 'Status',
+                      value: 'Unable to read device info',
+                    ),
                 ],
               ),
               SizedBox(height: 32.h),
 
-              // Submit button — only enabled if within geofence!
+              // Submit button... ONLY enabled if within geofence!
               SizedBox(
                 height: 50.h,
                 child: ElevatedButton.icon(
-                  onPressed: locationState.isWithinGeofence 
+                  onPressed: locationState.isWithinGeofence
                       ? () => _submitAttendance(context)
                       : null, // Disabled if outside geofence
                   icon: const Icon(Icons.check),
@@ -186,6 +269,7 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
               ),
               SizedBox(height: 12.h),
 
+              // Cancel button
               SizedBox(
                 height: 50.h,
                 child: OutlinedButton(
@@ -200,14 +284,87 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
     );
   }
 
-  void _submitAttendance(BuildContext context) {
+  /// Submits attendance to the mock service
+  Future<void> _submitAttendance(BuildContext context) async {
+    final locationState = ref.read(locationProvider);
+    final deviceState = ref.read(deviceInfoProvider);
+    final authState = ref.read(authProvider);
+
+    // Validate we have all required data
+    if (locationState.position == null) {
+      _showError(context, 'Location not available. Please try again.');
+      return;
+    }
+
+    if (deviceState.deviceInfo == null) {
+      _showError(context, 'Device info not available. Please try again.');
+      return;
+    }
+
+    // Create the attendance record
+    final record = AttendanceRecordModel(
+      employeeId: authState.user?.id ?? 'unknown',
+      employeeName: authState.user?.fullName ?? 'Unknown',
+      siteId: widget.siteId,
+      siteName: widget.siteName,
+      qrCodeValue: widget.siteId,
+      latitude: locationState.position!.latitude,
+      longitude: locationState.position!.longitude,
+      deviceName: deviceState.deviceInfo!.deviceName,
+      deviceModel: deviceState.deviceInfo!.deviceModel,
+      operatingSystem:
+          '${deviceState.deviceInfo!.operatingSystem} ${deviceState.deviceInfo!.osVersion}',
+      appVersion: deviceState.deviceInfo!.appVersion,
+      scanTime: DateTime.now(),
+    );
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 20),
+            Text('Submitting attendance...'),
+          ],
+        ),
+      ),
+    );
+
+    // Submit to mock service
+    final success = await MockAttendanceService.submitAttendance(record);
+
+    // Close loading dialog
+    if (mounted) Navigator.pop(context);
+
+    if (success && mounted) {
+      _showSuccessDialog(record);
+    }
+  }
+
+  /// Shows success dialog after submission
+  void _showSuccessDialog(AttendanceRecordModel record) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        title: const Text('Success!'),
-        content: const Text('Your attendance has been recorded successfully.'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green),
+            SizedBox(width: 8),
+            Text('Success!'),
+          ],
+        ),
+        content: Text(
+          'Attendance recorded at ${widget.siteName}.\n\n'
+          'Time: ${record.scanTime.hour}:${record.scanTime.minute.toString().padLeft(2, '0')}\n'
+          'Device: ${record.deviceName}',
+        ),
         actions: [
           ElevatedButton(
             onPressed: () {
@@ -220,9 +377,22 @@ class _AttendanceConfirmationScreenState extends ConsumerState<AttendanceConfirm
       ),
     );
   }
+
+  /// Shows error as a SnackBar
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
 }
 
-/// Reusable card widget for information sections
+//Reuseable widgets
+
+/// Card widget for grouping related information
 class _InfoCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -252,10 +422,14 @@ class _InfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Card header: icon + title
+          // Header: icon + title
           Row(
             children: [
-              Icon(icon, color: AppTheme.primaryColor, size: 20.r),
+              Icon(
+                icon,
+                color: AppTheme.primaryColor,
+                size: 20.r,
+              ),
               SizedBox(width: 8.w),
               Text(
                 title,
@@ -268,7 +442,8 @@ class _InfoCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12.h),
-          // Spread operator (...) inserts all children
+
+          // Content
           ...children,
         ],
       ),
@@ -276,8 +451,7 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-
-/// Reusable row widget for label-value pairs
+/// Row widget for label-value pairs
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
@@ -294,7 +468,6 @@ class _InfoRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
-        // Puts space between label and value
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
