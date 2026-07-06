@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/features/attendance/presentation/providers/sync_provider.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -13,6 +14,8 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
+
+    final syncState = ref.watch(syncProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,6 +48,63 @@ class HomeScreen extends ConsumerWidget {
               style: AppTheme.bodyLarge,
             ),
             SizedBox(height: 32.h),
+
+           // Show sync banner if there are pending records
+           if (syncState.pendingCount > 0)
+           Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.orange),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.sync_problem, color: Colors.orange, size: 24.r),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${syncState.pendingCount} record(s) pending sync',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  'Tap to sync now',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.orange.withOpacity(0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (syncState.isSyncing)
+            SizedBox(
+              width: 20.r,
+              height: 20.r,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.orange,
+              ),
+            )
+          else
+            IconButton(
+              icon: Icon(Icons.sync, color: Colors.orange, size: 24.r),
+              onPressed: () {
+                ref.read(syncProvider.notifier).syncNow();
+              },
+            ),
+        ],
+      ),
+    ),
 
             // Quick actions
             Text(

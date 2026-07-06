@@ -64,6 +64,10 @@ dependencies:
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
 
+
+  # Connectivity checking
+  connectivity_plus: ^6.0.3
+
   # UI Utilities
   flutter_screenutil: ^5.9.0
   google_fonts: ^6.2.1

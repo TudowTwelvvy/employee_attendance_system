@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/core/services/connectivity_service.dart';
+import 'package:ui/core/services/offline_queue_service.dart';
+import 'package:ui/features/attendance/presentation/providers/sync_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/datasources/mock_attendance_service.dart';
@@ -286,97 +289,115 @@ class _AttendanceConfirmationScreenState
 
   /// Submits attendance to the mock service
   Future<void> _submitAttendance(BuildContext context) async {
-    final locationState = ref.read(locationProvider);
-    final deviceState = ref.read(deviceInfoProvider);
-    final authState = ref.read(authProvider);
+  final locationState = ref.read(locationProvider);
+  final deviceState = ref.read(deviceInfoProvider);
+  final authState = ref.read(authProvider);
 
-    // Validate we have all required data
-    if (locationState.position == null) {
-      _showError(context, 'Location not available. Please try again.');
-      return;
-    }
+  // Validate data
+  if (locationState.position == null) {
+    _showError(context, 'Location not available. Please try again.');
+    return;
+  }
 
-    if (deviceState.deviceInfo == null) {
-      _showError(context, 'Device info not available. Please try again.');
-      return;
-    }
+  if (deviceState.deviceInfo == null) {
+    _showError(context, 'Device info not available. Please try again.');
+    return;
+  }
 
-    // Create the attendance record
-    final record = AttendanceRecordModel(
-      employeeId: authState.user?.id ?? 'unknown',
-      employeeName: authState.user?.fullName ?? 'Unknown',
-      siteId: widget.siteId,
-      siteName: widget.siteName,
-      qrCodeValue: widget.siteId,
-      latitude: locationState.position!.latitude,
-      longitude: locationState.position!.longitude,
-      deviceName: deviceState.deviceInfo!.deviceName,
-      deviceModel: deviceState.deviceInfo!.deviceModel,
-      operatingSystem:
-          '${deviceState.deviceInfo!.operatingSystem} ${deviceState.deviceInfo!.osVersion}',
-      appVersion: deviceState.deviceInfo!.appVersion,
-      scanTime: DateTime.now(),
-    );
+  // Create the attendance record
+  final record = AttendanceRecordModel(
+    employeeId: authState.user?.id ?? 'unknown',
+    employeeName: authState.user?.fullName ?? 'Unknown',
+    siteId: widget.siteId,
+    siteName: widget.siteName,
+    qrCodeValue: widget.siteId,
+    latitude: locationState.position!.latitude,
+    longitude: locationState.position!.longitude,
+    deviceName: deviceState.deviceInfo!.deviceName,
+    deviceModel: deviceState.deviceInfo!.deviceModel,
+    operatingSystem: '${deviceState.deviceInfo!.operatingSystem} ${deviceState.deviceInfo!.osVersion}',
+    appVersion: deviceState.deviceInfo!.appVersion,
+    scanTime: DateTime.now(),
+  );
 
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const AlertDialog(
-        content: Row(
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 20),
-            Text('Submitting attendance...'),
-          ],
-        ),
-      ),
-    );
+  // Check internet connection
+  final isOnline = await ConnectivityService().isConnected();
 
-    // Submit to mock service
+  if (isOnline) {
+    // Online: submit directly
+    _showLoading(context);
     final success = await MockAttendanceService.submitAttendance(record);
-
-    // Close loading dialog
-    if (mounted) Navigator.pop(context);
+    if (mounted) Navigator.pop(context); // Close loading
 
     if (success && mounted) {
-      _showSuccessDialog(record);
+      _showSuccessDialog(record, synced: true);
+    }
+  } else {
+    // Offline: queue for later
+    await ref.read(syncProvider.notifier).queueRecord(record);
+
+    if (mounted) {
+      _showSuccessDialog(record, synced: false);
     }
   }
+}
 
-  /// Shows success dialog after submission
-  void _showSuccessDialog(AttendanceRecordModel record) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 8),
-            Text('Success!'),
-          ],
-        ),
-        content: Text(
-          'Attendance recorded at ${widget.siteName}.\n\n'
-          'Time: ${record.scanTime.hour}:${record.scanTime.minute.toString().padLeft(2, '0')}\n'
-          'Device: ${record.deviceName}',
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.go('/home');
-            },
-            child: const Text('OK'),
-          ),
+void _showLoading(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => const AlertDialog(
+      content: Row(
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(width: 20),
+          Text('Submitting attendance...'),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
+ 
+void _showSuccessDialog(AttendanceRecordModel record, {required bool synced}) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      title: Row(
+        children: [
+          Icon(
+            synced ? Icons.check_circle : Icons.schedule,
+            color: synced ? Colors.green : Colors.orange,
+          ),
+          SizedBox(width: 8),
+          Text(synced ? 'Success!' : 'Saved Offline'),
+        ],
+      ),
+      content: Text(
+        synced
+            ? 'Attendance recorded at ${widget.siteName}.\n\n'
+              'Time: ${record.scanTime.hour}:${record.scanTime.minute.toString().padLeft(2, '0')}\n'
+              'Device: ${record.deviceName}'
+            : 'Attendance saved locally. It will sync automatically when you have internet.\n\n'
+              'Site: ${widget.siteName}\n'
+              'Time: ${record.scanTime.hour}:${record.scanTime.minute.toString().padLeft(2, '0')}',
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            context.go('/home');
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
 
   /// Shows error as a SnackBar
   void _showError(BuildContext context, String message) {

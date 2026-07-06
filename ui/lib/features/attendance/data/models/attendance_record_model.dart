@@ -49,6 +49,24 @@ class AttendanceRecordModel {
     };
   }
 
+  //for reading from storage
+  factory AttendanceRecordModel.fromJson(Map<String, dynamic> json) {
+    return AttendanceRecordModel(
+      employeeId: json['employeeId'] ?? '',
+      employeeName: json['employeeName'] ?? '',
+      siteId: json['siteId'] ?? '',
+      siteName: json['siteName'] ?? '',
+      qrCodeValue: json['qrCodeValue'] ?? '',
+      latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
+      longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
+      deviceName: json['deviceName'] ?? '',
+      deviceModel: json['deviceModel'] ?? '',
+      operatingSystem: json['operatingSystem'] ?? '',
+      appVersion: json['appVersion'] ?? '',
+      scanTime: DateTime.parse(json['scanTime'] as String),
+    );
+  }
+
   @override
   String toString() {
     return 'AttendanceRecord($employeeName at $siteName on ${scanTime.toIso8601String()})';
