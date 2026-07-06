@@ -8,7 +8,7 @@ import '../models/login_response_model.dart';
 class AuthRemoteDataSource {
   final DioClient _dioClient = DioClient();
 
-  /// Login with email and password 
+  /// Login with email and password
   /// For now i use a mock API. When my ASP.NET API is ready,
   /// change the endpoint to '/auth/login'.
   Future<LoginResponseModel> login(LoginRequestModel request) async {
@@ -16,10 +16,10 @@ class AuthRemoteDataSource {
       // For testing with mock API, i'll simulate a successful response
       // In production, this would be:
       // final response = await _dioClient.post('/auth/login', data: request.toJson());
-      
+
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // Mock successful response (replace with real API call)
       final mockResponse = {
         'success': true,
@@ -31,13 +31,12 @@ class AuthRemoteDataSource {
             'id': 'user_123',
             'email': request.email,
             'fullName': 'Lord Tumelo Twelvvy',
-            'role': 'Admin',
+            'role': request.email.contains('admin') ? 'Admin' : 'Employee',
           },
         },
       };
 
       return LoginResponseModel.fromJson(mockResponse);
-      
     } on DioException catch (e) {
       // Dio-specific errors (timeout, no connection, etc.)
       throw _handleDioError(e);
@@ -56,7 +55,7 @@ class AuthRemoteDataSource {
     try {
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // Mock successful response
       final mockResponse = {
         'success': true,
@@ -74,7 +73,6 @@ class AuthRemoteDataSource {
       };
 
       return LoginResponseModel.fromJson(mockResponse);
-      
     } on DioException catch (e) {
       throw _handleDioError(e);
     } catch (e) {

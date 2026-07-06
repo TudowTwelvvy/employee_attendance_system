@@ -49,68 +49,69 @@ class HomeScreen extends ConsumerWidget {
             ),
             SizedBox(height: 32.h),
 
-           // Show sync banner if there are pending records
-           if (syncState.pendingCount > 0)
-           Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.orange),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.sync_problem, color: Colors.orange, size: 24.r),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${syncState.pendingCount} record(s) pending sync',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
+            // Show sync banner if there are pending records
+            if (syncState.pendingCount > 0)
+              Container(
+                margin: EdgeInsets.only(bottom: 16.h),
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: Colors.orange),
                 ),
-                SizedBox(height: 4.h),
-                Text(
-                  'Tap to sync now',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.orange.withOpacity(0.8),
-                  ),
+                child: Row(
+                  children: [
+                    Icon(Icons.sync_problem, color: Colors.orange, size: 24.r),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${syncState.pendingCount} record(s) pending sync',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Tap to sync now',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.orange.withOpacity(0.8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (syncState.isSyncing)
+                      SizedBox(
+                        width: 20.r,
+                        height: 20.r,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.orange,
+                        ),
+                      )
+                    else
+                      IconButton(
+                        icon: Icon(
+                          Icons.sync,
+                          color: Colors.orange,
+                          size: 24.r,
+                        ),
+                        onPressed: () {
+                          ref.read(syncProvider.notifier).syncNow();
+                        },
+                      ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          if (syncState.isSyncing)
-            SizedBox(
-              width: 20.r,
-              height: 20.r,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.orange,
               ),
-            )
-          else
-            IconButton(
-              icon: Icon(Icons.sync, color: Colors.orange, size: 24.r),
-              onPressed: () {
-                ref.read(syncProvider.notifier).syncNow();
-              },
-            ),
-        ],
-      ),
-    ),
 
             // Quick actions
-            Text(
-              'Quick Actions',
-              style: AppTheme.headingSmall,
-            ),
+            Text('Quick Actions', style: AppTheme.headingSmall),
             SizedBox(height: 16.h),
 
             // Scan QR button
@@ -138,6 +139,17 @@ class HomeScreen extends ConsumerWidget {
               subtitle: 'View and edit your details',
               onTap: () => context.push(AppRouter.profile),
             ),
+
+            // Only show admin card if user is admin
+            if (user?.isAdmin ?? false) ...[
+              SizedBox(height: 12.h),
+              _ActionCard(
+                icon: Icons.admin_panel_settings,
+                title: 'Admin Dashboard',
+                subtitle: 'Manage employees, sites, and reports',
+                onTap: () => context.push(AppRouter.adminDashboard),
+              ),
+            ],
           ],
         ),
       ),
@@ -184,11 +196,7 @@ class _ActionCard extends StatelessWidget {
                 color: AppTheme.primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(
-                icon,
-                color: AppTheme.primaryColor,
-                size: 28.r,
-              ),
+              child: Icon(icon, color: AppTheme.primaryColor, size: 28.r),
             ),
             SizedBox(width: 16.w),
             Expanded(
@@ -205,19 +213,12 @@ class _ActionCard extends StatelessWidget {
                   SizedBox(height: 4.h),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                   ),
                 ],
               ),
             ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16.r,
-              color: Colors.grey,
-            ),
+            Icon(Icons.arrow_forward_ios, size: 16.r, color: Colors.grey),
           ],
         ),
       ),
