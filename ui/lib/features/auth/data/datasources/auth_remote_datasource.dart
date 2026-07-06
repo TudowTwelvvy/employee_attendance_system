@@ -30,8 +30,8 @@ class AuthRemoteDataSource {
           'user': {
             'id': 'user_123',
             'email': request.email,
-            'fullName': 'John Doe',
-            'role': 'Employee',
+            'fullName': 'Lord Tumelo Twelvvy',
+            'role': 'Admin',
           },
         },
       };
