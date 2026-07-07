@@ -18,9 +18,7 @@ class ProfileScreen extends ConsumerWidget {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Profile')),
-        body: const Center(
-          child: Text('No user logged in'),
-        ),
+        body: const Center(child: Text('No user logged in')),
       );
     }
 
@@ -125,7 +123,9 @@ class _ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get first letter of name for avatar
-    final initial = user.fullName.isNotEmpty ? user.fullName[0].toUpperCase() : '?';
+    final initial = user.fullName.isNotEmpty
+        ? user.fullName[0].toUpperCase()
+        : '?';
 
     // Role color mapping
     final roleColor = _getRoleColor(user.role);
@@ -164,7 +164,7 @@ class _ProfileHeader extends StatelessWidget {
         // Full name
         Text(
           user.fullName,
-          style: AppTheme.headingMedium,
+          style: AppTheme.headingMedium(context),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 8.h),
@@ -172,7 +172,7 @@ class _ProfileHeader extends StatelessWidget {
         // Email
         Text(
           user.email,
-          style: AppTheme.bodyLarge,
+          style: AppTheme.bodyLarge(context),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 12.h),
@@ -269,7 +269,11 @@ class _AccountDetailsCard extends StatelessWidget {
           Divider(height: 24.h),
           _DetailRow(icon: Icons.email, label: 'Email', value: user.email),
           Divider(height: 24.h),
-          _DetailRow(icon: Icons.person, label: 'Full Name', value: user.fullName),
+          _DetailRow(
+            icon: Icons.person,
+            label: 'Full Name',
+            value: user.fullName,
+          ),
           Divider(height: 24.h),
           _DetailRow(icon: Icons.work, label: 'Role', value: user.role),
         ],
@@ -314,28 +318,26 @@ class _RoleInfoCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-          ...permissions.map((permission) => Padding(
-            padding: EdgeInsets.only(bottom: 12.h),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.check_circle,
-                  size: 20.r,
-                  color: Colors.green,
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Text(
-                    permission,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: AppTheme.textSecondary,
+          ...permissions.map(
+            (permission) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: Row(
+                children: [
+                  Icon(Icons.check_circle, size: 20.r, color: Colors.green),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      permission,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppTheme.textSecondary,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -396,10 +398,7 @@ class _DetailRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 12.sp, color: Colors.grey),
               ),
               SizedBox(height: 2.h),
               Text(

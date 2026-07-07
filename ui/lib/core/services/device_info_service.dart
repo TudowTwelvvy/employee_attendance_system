@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:package_info_plus/package_info_plus.dart';
-
 
 class DeviceInfoService {
   DeviceInfoService._();
@@ -24,7 +24,18 @@ class DeviceInfoService {
 
     // Read app information (version, build number)
     final packageInfo = await PackageInfo.fromPlatform();
-    
+
+    if (kIsWeb) {
+      _cachedInfo = DeviceInfo(
+        deviceName: 'Web Browser',
+        deviceModel: 'Chrome/Edge/Safari',
+        operatingSystem: 'Web',
+        osVersion: 'Unknown',
+        appVersion: packageInfo.version,
+        appBuildNumber: packageInfo.buildNumber,
+      );
+      return _cachedInfo!;
+    }
     // Read device information (different for Android vs iOS)
     String brand = 'Unknown';
     String model = 'Unknown';
@@ -32,18 +43,18 @@ class DeviceInfoService {
     String osVersion = 'Unknown';
 
     // Platform.isAndroid and Platform.isIOS tell us which OS we're on
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       // Android-specific info
       final androidInfo = await deviceInfoPlugin.androidInfo;
-      brand = androidInfo.brand;      // e.g., "samsung"
-      model = androidInfo.model;      // e.g., "SM-G991B"
+      brand = androidInfo.brand; // e.g., "samsung"
+      model = androidInfo.model; // e.g., "SM-G991B"
       os = 'Android';
       osVersion = androidInfo.version.release; // e.g., "14"
-    } else if (Platform.isIOS) {
+    } else if (!!kIsWeb && Platform.isIOS) {
       // iOS-specific info
       final iosInfo = await deviceInfoPlugin.iosInfo;
       brand = 'Apple';
-      model = iosInfo.utsname.machine;// e.g., "iPhone14,2"
+      model = iosInfo.utsname.machine; // e.g., "iPhone14,2"
       os = 'iOS';
       osVersion = iosInfo.systemVersion; // e.g., "17.1"
     }
@@ -54,7 +65,7 @@ class DeviceInfoService {
       deviceModel: model,
       operatingSystem: os,
       osVersion: osVersion,
-      appVersion: packageInfo.version,      // e.g., "1.0.0"
+      appVersion: packageInfo.version, // e.g., "1.0.0"
       appBuildNumber: packageInfo.buildNumber, // e.g., "1"
     );
 
@@ -63,15 +74,15 @@ class DeviceInfoService {
 }
 
 /// Data class that holds all device information
-/// 
+///
 /// This is a simple "container" with no logic — just data.
 class DeviceInfo {
-  final String deviceName;        // "Samsung Galaxy S21"
-  final String deviceModel;       // "SM-G991B"
-  final String operatingSystem;   // "Android"
-  final String osVersion;         // "14"
-  final String appVersion;        // "1.0.0"
-  final String appBuildNumber;    // "1"
+  final String deviceName; // "Samsung Galaxy S21"
+  final String deviceModel; // "SM-G991B"
+  final String operatingSystem; // "Android"
+  final String osVersion; // "14"
+  final String appVersion; // "1.0.0"
+  final String appBuildNumber; // "1"
 
   const DeviceInfo({
     required this.deviceName,
@@ -83,7 +94,7 @@ class DeviceInfo {
   });
 
   /// Convert to a Map for sending to API
-  /// 
+  ///
   /// When we submit attendance, we send this data as JSON.
   Map<String, dynamic> toJson() {
     return {

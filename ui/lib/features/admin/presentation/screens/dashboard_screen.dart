@@ -226,8 +226,10 @@ class _AdminHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width > 800;
+
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(isDesktop ? 32.w : 20.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -260,7 +262,7 @@ class _AdminHeader extends StatelessWidget {
                     ),
                     SizedBox(width: 6.w),
                     Text(
-                      'ADMIN',
+                      'ADMIN PORTAL',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12.sp,
@@ -272,20 +274,20 @@ class _AdminHeader extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 16.h),
           Text(
-            'Welcome, $userName!',
+            'Welcome back, $userName!',
             style: TextStyle(
-              fontSize: 22.sp,
+              fontSize: isDesktop ? 28.sp : 22.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: 8.h),
           Text(
-            'Manage your organization from here.',
+            'Here\'s what\'s happening in your organization today.',
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: isDesktop ? 16.sp : 14.sp,
               color: Colors.white.withOpacity(0.8),
             ),
           ),

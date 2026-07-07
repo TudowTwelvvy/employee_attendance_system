@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ui/features/admin/presentation/screens/dashboard_screen.dart';
+import 'package:ui/features/attendance/presentation/screens/attendance_confirmation_screen.dart';
 import 'package:ui/features/attendance/presentation/screens/attendance_history_screen.dart';
+import 'package:ui/features/attendance/presentation/screens/qr_scanner_screen.dart';
+import 'package:ui/features/auth/presentation/screens/login_screen.dart';
+import 'package:ui/features/auth/presentation/screens/register_screen.dart';
+import 'package:ui/features/auth/presentation/screens/splash_screen.dart';
+import 'package:ui/features/home/presentation/screens/home_screen.dart';
 import 'package:ui/features/profile/presentation/screens/profile_screen.dart';
-import '../../features/attendance/presentation/screens/attendance_confirmation_screen.dart';
-import '../../features/attendance/presentation/screens/qr_scanner_screen.dart';
-import '../../features/auth/presentation/screens/login_screen.dart';
-import '../../features/auth/presentation/screens/register_screen.dart';
-import '../../features/auth/presentation/screens/splash_screen.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/admin/presentation/screens/admin_shell_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -21,30 +22,48 @@ class AppRouter {
   static const String attendanceScan = '/attendance/scan';
   static const String attendanceConfirm = '/attendance/confirm';
   static const String attendanceHistory = '/attendance/history';
+
+  // Admin routes
   static const String adminDashboard = '/admin/dashboard';
+  static const String adminEmployees = '/admin/employees';
+  static const String adminSites = '/admin/sites';
+  static const String adminReports = '/admin/reports';
+  static const String adminQR = '/admin/qr';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
     debugLogDiagnostics: true,
     routes: [
-      GoRoute(path: splash, name: 'splash', builder: (context, state) => const SplashScreen()),
-      GoRoute(path: login, name: 'login', builder: (context, state) => const LoginScreen()),
-      GoRoute(path: register, name: 'register', builder: (context, state) => const RegisterScreen()),
-      GoRoute(path: home, name: 'home', builder: (context, state) => const HomeScreen()),
-      
-      // QR Scanner route
+      //Mobile routes
+      GoRoute(
+        path: splash,
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: login,
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: register,
+        name: 'register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: home,
+        name: 'home',
+        builder: (context, state) => const HomeScreen(),
+      ),
       GoRoute(
         path: attendanceScan,
         name: 'attendanceScan',
         builder: (context, state) => const QRScannerScreen(),
       ),
-      
-      // Attendance Confirmation route (receives data via 'extra')
       GoRoute(
         path: attendanceConfirm,
         name: 'attendanceConfirm',
         builder: (context, state) {
-          // Extract data passed from QR scanner
           final extra = state.extra as Map<String, dynamic>?;
           return AttendanceConfirmationScreen(
             siteId: extra?['siteId'] ?? 'unknown',
@@ -52,16 +71,8 @@ class AppRouter {
             siteLatitude: extra?['latitude'] ?? 0.0,
             siteLongitude: extra?['longitude'] ?? 0.0,
             radiusInMeters: extra?['radiusInMeters'] ?? 100.0,
-
           );
         },
-      ),
-      
-      // Placeholder routes for future features
-      GoRoute(
-        path: profile,
-        name: 'profile',
-        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: attendanceHistory,
@@ -69,9 +80,51 @@ class AppRouter {
         builder: (context, state) => const AttendanceHistoryScreen(),
       ),
       GoRoute(
-        path: adminDashboard,
-        name: 'adminDashboard',
-        builder: (context, state) => const AdminDashboardScreen(),
+        path: profile,
+        name: 'profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+
+      // Admin routes with ShellRoute (nested navigation)
+      ShellRoute(
+        builder: (context, state, child) {
+          return AdminShellScreen(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: adminDashboard,
+            name: 'adminDashboard',
+            builder: (context, state) => const AdminDashboardScreen(),
+          ),
+          GoRoute(
+            path: adminEmployees,
+            name: 'adminEmployees',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Employee Management - Coming Soon')),
+            ),
+          ),
+          GoRoute(
+            path: adminSites,
+            name: 'adminSites',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Site Management - Coming Soon')),
+            ),
+          ),
+          GoRoute(
+            path: adminReports,
+            name: 'adminReports',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Reports - Coming Soon')),
+            ),
+          ),
+          GoRoute(
+            path: adminQR,
+            name: 'adminQR',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('QR Code Generation - Coming Soon')),
+            ),
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

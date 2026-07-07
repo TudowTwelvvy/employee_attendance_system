@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// ConnectivityService checks if the phone has internet.
 class ConnectivityService {
@@ -11,13 +12,13 @@ class ConnectivityService {
   /// Check current connection status
   /// Returns true if connected to WiFi or mobile data.
   Future<bool> isConnected() async {
+    if (kIsWeb) return true;
     final result = await _connectivity.checkConnectivity();
-    
+
     // List of results (can have multiple connections)
     // Check if ANY connection is available
-    return result.any((r) => 
-      r == ConnectivityResult.wifi || 
-      r == ConnectivityResult.mobile
+    return result.any(
+      (r) => r == ConnectivityResult.wifi || r == ConnectivityResult.mobile,
     );
   }
 

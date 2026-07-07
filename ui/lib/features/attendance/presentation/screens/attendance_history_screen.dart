@@ -58,9 +58,7 @@ class _AttendanceHistoryScreenState
   Widget _buildBody(AttendanceHistoryState state) {
     // Loading state
     if (state.isLoading && state.records.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     // Error state
@@ -103,13 +101,13 @@ class _AttendanceHistoryScreenState
               SizedBox(height: 16.h),
               Text(
                 'No Attendance Records',
-                style: AppTheme.headingMedium,
+                style: AppTheme.headingMedium(context),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 8.h),
               Text(
                 'Your attendance history will appear here after you check in.',
-                style: AppTheme.bodyLarge,
+                style: AppTheme.bodyLarge(context),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 24.h),
@@ -156,9 +154,7 @@ class _AttendanceRecordCard extends StatelessWidget {
       // Card styling
       margin: EdgeInsets.only(bottom: 12.h),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -203,10 +199,7 @@ class _AttendanceRecordCard extends StatelessWidget {
             // Date text
             Text(
               dateText,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey),
             ),
             SizedBox(height: 12.h),
 
@@ -222,10 +215,7 @@ class _AttendanceRecordCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     record.deviceName,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -234,10 +224,7 @@ class _AttendanceRecordCard extends StatelessWidget {
                 SizedBox(width: 4.w),
                 Text(
                   '${record.latitude.toStringAsFixed(2)}, ${record.longitude.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                 ),
               ],
             ),
@@ -248,7 +235,7 @@ class _AttendanceRecordCard extends StatelessWidget {
   }
 
   /// Formats a DateTime into a human-readable string
-  /// 
+  ///
   /// - Today → "Today"
   /// - Yesterday → "Yesterday"
   /// - Otherwise → "3 July 2026"
@@ -264,8 +251,19 @@ class _AttendanceRecordCard extends StatelessWidget {
     } else {
       // Format: "3 July 2026"
       final months = [
-        '', 'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
+        '',
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
       ];
       return '${date.day} ${months[date.month]} ${date.year}';
     }

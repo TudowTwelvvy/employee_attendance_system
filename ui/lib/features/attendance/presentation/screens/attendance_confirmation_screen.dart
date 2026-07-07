@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ui/core/services/connectivity_service.dart';
-import 'package:ui/core/services/offline_queue_service.dart';
+//import 'package:ui/core/services/offline_queue_service.dart';
 import 'package:ui/features/attendance/presentation/providers/sync_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -82,7 +82,7 @@ class _AttendanceConfirmationScreenState
               // Title
               Text(
                 'Attendance Check-In',
-                style: AppTheme.headingMedium,
+                style: AppTheme.headingMedium(context),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 24.h),
@@ -183,8 +183,8 @@ class _AttendanceConfirmationScreenState
                           Expanded(
                             child: Text(
                               locationState.isWithinGeofence
-                                  ? '✅ Within geofence — You are at the site!'
-                                  : '❌ Outside geofence — You are too far from the site!',
+                                  ? 'Within geofence — You are at the site!'
+                                  : 'Outside geofence — You are too far from the site!',
                               style: TextStyle(
                                 color: locationState.isWithinGeofence
                                     ? Colors.green
