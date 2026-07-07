@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ui/features/admin/presentation/screens/dashboard_screen.dart';
+import 'package:ui/features/admin/presentation/screens/employee_management_screen.dart';
 import 'package:ui/features/attendance/presentation/screens/attendance_confirmation_screen.dart';
 import 'package:ui/features/attendance/presentation/screens/attendance_history_screen.dart';
 import 'package:ui/features/attendance/presentation/screens/qr_scanner_screen.dart';
@@ -99,9 +100,7 @@ class AppRouter {
           GoRoute(
             path: adminEmployees,
             name: 'adminEmployees',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('Employee Management - Coming Soon')),
-            ),
+            builder: (context, state) => const EmployeeManagementScreen(),
           ),
           GoRoute(
             path: adminSites,
