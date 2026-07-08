@@ -68,6 +68,11 @@ dependencies:
   # Connectivity checking
   connectivity_plus: ^6.0.3
 
+  # QR Code Generation
+  qr_flutter: ^4.1.0
+  #printing qr code
+  printing: ^5.12.0
+
   #for web storage
   shared_preferences: ^2.2.3
 

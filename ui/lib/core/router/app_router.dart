@@ -12,6 +12,7 @@ import 'package:ui/features/auth/presentation/screens/splash_screen.dart';
 import 'package:ui/features/home/presentation/screens/home_screen.dart';
 import 'package:ui/features/profile/presentation/screens/profile_screen.dart';
 import '../../features/admin/presentation/screens/admin_shell_screen.dart';
+import '../../features/admin/presentation/screens/qr_generation_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -118,9 +119,7 @@ class AppRouter {
           GoRoute(
             path: adminQR,
             name: 'adminQR',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('QR Code Generation - Coming Soon')),
-            ),
+            builder: (context, state) => const QRGenerationScreen(),
           ),
         ],
       ),
