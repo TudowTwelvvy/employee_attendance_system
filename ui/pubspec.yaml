@@ -72,9 +72,17 @@ dependencies:
   qr_flutter: ^4.1.0
   #printing qr code
   printing: ^5.12.0
+  # Charts
+  fl_chart: ^0.68.0
+  # Excel export
+  excel: ^4.0.2
 
   #for web storage
   shared_preferences: ^2.2.3
+
+  # Interactive maps
+  flutter_map: ^7.0.0
+  latlong2: ^0.9.1  # Required by flutter_map for coordinates
 
   # UI Utilities
   flutter_screenutil: ^5.9.0
