@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ui/features/admin/presentation/screens/attendance_reports_screen.dart';
 import 'package:ui/features/admin/presentation/screens/dashboard_screen.dart';
 import 'package:ui/features/admin/presentation/screens/employee_management_screen.dart';
+import 'package:ui/features/admin/presentation/screens/live_tracking_screen.dart';
 import 'package:ui/features/admin/presentation/screens/site_management_screen.dart';
 import 'package:ui/features/attendance/presentation/screens/attendance_confirmation_screen.dart';
 import 'package:ui/features/attendance/presentation/screens/attendance_history_screen.dart';
@@ -33,6 +34,7 @@ class AppRouter {
   static const String adminSites = '/admin/sites';
   static const String adminReports = '/admin/reports';
   static const String adminQR = '/admin/qr';
+  static const String adminTracking = '/admin/tracking';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -119,6 +121,11 @@ class AppRouter {
             path: adminQR,
             name: 'adminQR',
             builder: (context, state) => const QRGenerationScreen(),
+          ),
+          GoRoute(
+            path: adminTracking, // e.g., '/admin/tracking'
+            name: 'adminTracking',
+            builder: (context, state) => const LiveTrackingScreen(),
           ),
         ],
       ),

@@ -21,6 +21,7 @@ class _AdminShellScreenState extends State<AdminShellScreen> {
     if (location.contains('/admin/sites')) return 2;
     if (location.contains('/admin/reports')) return 3;
     if (location.contains('/admin/qr')) return 4;
+    if (location.contains('/admin/tracking')) return 5;
     return 0; // Dashboard
   }
 
@@ -59,6 +60,12 @@ class _AdminShellScreenState extends State<AdminShellScreen> {
           route: '/admin/qr',
           icon: Icons.qr_code_outlined,
           selectedIcon: Icons.qr_code,
+        ),
+        NavigationItem(
+          label: 'Live Tracking',
+          route: '/admin/tracking',
+          icon: Icons.map_outlined,
+          selectedIcon: Icons.map,
         ),
       ],
       body: widget.child,
