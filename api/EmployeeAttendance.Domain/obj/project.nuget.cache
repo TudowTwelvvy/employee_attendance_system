@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "feLl2wEGxtQ=",
+  "dgSpecHash": "U4UigM3W2Vc=",
   "success": true,
   "projectFilePath": "C:\\Users\\cash\\Flutter-Projects\\employee_attendance_system\\api\\EmployeeAttendance.Domain\\EmployeeAttendance.Domain.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\cash\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.27\\microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\cash\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.27\\microsoft.windowsdesktop.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\cash\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.27\\microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512"
+  ],
   "logs": []
 }
