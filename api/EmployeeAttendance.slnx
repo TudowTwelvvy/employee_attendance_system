@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="EmployeeAttendance.API/EmployeeAttendance.API.csproj" />
+  <Project Path="EmployeeAttendance.Application/EmployeeAttendance.Application.csproj" />
+  <Project Path="EmployeeAttendance.Domain/EmployeeAttendance.Domain.csproj" />
+  <Project Path="EmployeeAttendance.Infrastructure/EmployeeAttendance.Infrastructure.csproj" />
+</Solution>

@@ -1,0 +1,16 @@
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\bin\Debug\net10.0\EmployeeAttendance.Application.deps.json
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\bin\Debug\net10.0\EmployeeAttendance.Application.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\bin\Debug\net10.0\EmployeeAttendance.Application.pdb
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\bin\Debug\net10.0\EmployeeAttendance.Domain.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\bin\Debug\net10.0\EmployeeAttendance.Domain.pdb
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.csproj.AssemblyReference.cache
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.AssemblyInfoInputs.cache
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.AssemblyInfo.cs
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.csproj.CoreCompileInputs.cache
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.sourcelink.json
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\Employee.4F4DAD27.Up2Date
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\refint\EmployeeAttendance.Application.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\EmployeeAttendance.Application.pdb
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.Application\obj\Debug\net10.0\ref\EmployeeAttendance.Application.dll
