@@ -144,3 +144,10 @@ C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance
 C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\cash\Flutter-Projects\employee_attendance_system\api\EmployeeAttendance.API\bin\Debug\net8.0\Microsoft.Extensions.Options.dll

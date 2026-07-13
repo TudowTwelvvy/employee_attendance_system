@@ -1,0 +1,16 @@
+# Environment variables
+.env
+
+# Build folders
+bin/
+obj/
+
+# Visual Studio
+.vs/
+
+# VS Code settings (optional)
+.vscode/
+
+# Flutter (if applicable)
+build/
+.dart_tool/

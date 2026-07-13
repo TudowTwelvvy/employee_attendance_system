@@ -1,6 +1,19 @@
 using EmployeeAttendance.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
+using DotNetEnv;
+
+Env.Load();
+
+var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+
+var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+
+var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+
+var expiryMinutes = int.Parse(
+    Environment.GetEnvironmentVariable("JWT_EXPIRY_MINUTES")!);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
