@@ -3,12 +3,19 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using EmployeeAttendance.Infrastructure.Identity;
+using EmployeeAttendance.Application.Interfaces.Services;
 
 namespace EmployeeAttendance.Infrastructure.Services;
 
-
-public class JwtTokenService
+/// <summary>
+/// JwtTokenService implements IJwtTokenService using JWT libraries.
+/// 
+/// This is the ONLY place that knows about:
+/// - JwtSecurityToken
+/// - SymmetricSecurityKey
+/// - SigningCredentials
+/// </summary>
+public class JwtTokenService : IJwtTokenService
 {
     private readonly IConfiguration _configuration;
 
@@ -17,58 +24,50 @@ public class JwtTokenService
         _configuration = configuration;
     }
 
-
-    // Generate a JWT token for a user
-    public string GenerateToken(ApplicationUser user, IList<string> roles)
+    public string GenerateToken(
+        string userId,
+        string email,
+        string userName,
+        Guid? companyId,
+        IList<string> roles)
     {
-        // Get JWT settings from configuration
         var jwtSettings = _configuration.GetSection("JwtSettings");
-        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")!;
+        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+            ?? jwtSettings["SecretKey"]!;
         var issuer = jwtSettings["Issuer"]!;
         var audience = jwtSettings["Audience"]!;
         var expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"]!);
 
-        // Create security key from secret
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-        // Create signing credentials (HMAC-SHA256)
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        //claims (data stored in the token)
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),           // User ID
-            new Claim(JwtRegisteredClaimNames.Email, user.Email!),      // Email
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique token ID
-            new Claim("companyId", user.CompanyId?.ToString() ?? ""),   // Company ID
-            new Claim("fullName", user.UserName ?? ""),               // Display name
+            new Claim(JwtRegisteredClaimNames.Sub, userId),
+            new Claim(JwtRegisteredClaimNames.Email, email),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("companyId", companyId?.ToString() ?? ""),
+            new Claim("fullName", userName),
         };
 
-        // role claims
         foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        // Create the token
         var token = new JwtSecurityToken(
-            issuer: issuer,                    // Who issued the token
-            audience: audience,               // Who can use it
-            claims: claims,                   // Data inside token
-            expires: DateTime.UtcNow.AddMinutes(expiryMinutes), // Expiry
-            signingCredentials: credentials    // How to verify it's authentic
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
+            signingCredentials: credentials
         );
 
-        // Serialize to string
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    /// <summary>
-    /// Generate a refresh token (long-lived, used to get new access tokens)
-    /// </summary>
     public string GenerateRefreshToken()
     {
-        // Simple random token for refresh
         return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
     }
 }

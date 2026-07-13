@@ -1,4 +1,6 @@
 using System.Text;
+using EmployeeAttendance.Application.Interfaces.Services;
+using EmployeeAttendance.Application.Services;
 using EmployeeAttendance.Infrastructure.Data;
 using EmployeeAttendance.Infrastructure.Identity;
 using EmployeeAttendance.Infrastructure.Services;
@@ -73,7 +75,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Register custom services
-builder.Services.AddScoped<JwtTokenService>();
+// Application Layer Services
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Infrastructure Services (implement Application Layer interfaces)
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
