@@ -79,6 +79,7 @@ builder.Services.AddAuthentication(options =>
 // Register custom services
 // Application Layer Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 // Infrastructure Services (implement Application Layer interfaces)
 builder.Services.AddScoped<IIdentityService, IdentityService>();
