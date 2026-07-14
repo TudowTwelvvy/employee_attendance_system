@@ -27,6 +27,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequestDto>
         RuleFor(x => x.ConfirmPassword)
             .Equal(x => x.Password).WithMessage("Passwords do not match");
 
+        // Custom rule: at least one of CompanyCode or CompanyName must be provided
         RuleFor(x => x)
             .Must(x => !string.IsNullOrEmpty(x.CompanyCode) || !string.IsNullOrEmpty(x.CompanyName))
             .WithMessage("Either company code or company name is required");

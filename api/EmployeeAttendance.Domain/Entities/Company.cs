@@ -6,7 +6,7 @@
 public class Company
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public String CompanyCode { get; set; } = string.Empty; public string Name { get; set; } = string.Empty;
     public string? Address { get; set; }
     public string? Phone { get; set; }
     public string Email { get; set; } = string.Empty;
