@@ -126,7 +126,3 @@ public class AttendanceRepository : IAttendanceRepository
                         && a.ScanType == Domain.Enums.ScanType.CheckIn);
     }
 }
-
-public interface IAttendanceRepository
-{
-}

@@ -1,8 +1,10 @@
 using System.Text;
+using EmployeeAttendance.Application.Interfaces.Repositories;
 using EmployeeAttendance.Application.Interfaces.Services;
 using EmployeeAttendance.Application.Services;
 using EmployeeAttendance.Infrastructure.Data;
 using EmployeeAttendance.Infrastructure.Identity;
+using EmployeeAttendance.Infrastructure.Repositories;
 using EmployeeAttendance.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -81,6 +83,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Infrastructure Services (implement Application Layer interfaces)
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+// Repositories
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IWorkSiteRepository, WorkSiteRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

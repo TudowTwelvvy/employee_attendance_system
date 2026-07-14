@@ -10,9 +10,8 @@ namespace EmployeeAttendance.Application.Interfaces.Repositories
     {
         Task<Company?> GetByIdAsync(Guid id);
         Task<Company?> GetByEmailAsync(string email);
-        Task<Company?> CreateAsync(Company company);
-        Task<Company?> ExistsByEmailAsync(string email);
-
+        Task<Company> CreateAsync(Company company);
+        Task<bool> ExistsByEmailAsync(string email);
 
     }
 }

@@ -15,7 +15,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<WorkSite> WorkSites { get; set; } = null!;
     public DbSet<AttendanceRecord> AttendanceRecords { get; set; } = null!;
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
-
     // Constructor — ASP.NET Core injects options automatically
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
