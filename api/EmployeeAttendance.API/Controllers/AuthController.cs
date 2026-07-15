@@ -60,13 +60,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Logout([FromRoute] string userId)
     {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
+        var userIdFromToken = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdFromToken) || userIdFromToken != userId)
         {
             return Unauthorized();
         }
+
         await _authService.LogoutAsync(userId);
         return Ok(new { message = "Logged out successfully" });
     }

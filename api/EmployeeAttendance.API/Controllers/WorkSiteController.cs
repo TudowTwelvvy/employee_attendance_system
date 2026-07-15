@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EmployeeAttendance.Application.Interfaces.Repositories;
+using EmployeeAttendance.Domain.Entities;
 
 namespace EmployeeAttendance.API.Controllers;
 
@@ -24,7 +25,7 @@ public class WorkSiteController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        // TODO: Filter by CompanyId from JWT claims (multi-tenant)
+        //Filter by CompanyId from JWT claims (multi-tenant)
         // For now, return all (will be fixed in Lesson 8 with middleware)
         var sites = await _workSiteRepository.GetByCompanyIdAsync(Guid.Empty);
         return Ok(sites);
@@ -47,4 +48,13 @@ public class WorkSiteController : ControllerBase
 
         return Ok(site);
     }
+
+    [HttpPost("worksite")]
+    public async Task<IActionResult> Create([FromBody] WorkSite workSite)
+    {
+        var createdWorkSite = await _workSiteRepository.CreateAsync(workSite);
+        return Ok(createdWorkSite);
+    }
+
+
 }
