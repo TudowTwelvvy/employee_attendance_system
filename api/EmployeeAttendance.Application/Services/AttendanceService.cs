@@ -73,6 +73,17 @@ public class AttendanceService : IAttendanceService
             }
         }
 
+        // Enforce check-in/check-out business rules
+        if (request.ScanType == ScanType.CheckIn)
+        {
+            // Can't check in more than once a day
+            bool hasCheckedIn = await _attendanceRepository.HasCheckedInTodayAsync(employee.Id);
+            if (hasCheckedIn)
+            {
+                throw new InvalidOperationException("You have already checked in today.");
+            }
+        }
+
         // Determine attendance status
         AttendanceStatus status;
         if (!isValidQr)
