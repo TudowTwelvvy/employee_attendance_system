@@ -4,16 +4,6 @@ using EmployeeAttendance.Infrastructure.Identity;
 
 namespace EmployeeAttendance.Infrastructure.Services;
 
-/// <summary>
-/// IdentityService implements IIdentityService using ASP.NET Core Identity.
-/// 
-/// This is the ONLY place in the entire app that knows about:
-/// - UserManager
-/// - SignInManager
-/// - ApplicationUser
-/// 
-/// The Application Layer uses IIdentityService and doesn't care HOW it works.
-/// </summary>
 public class IdentityService : IIdentityService
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -27,6 +17,7 @@ public class IdentityService : IIdentityService
         _signInManager = signInManager;
     }
 
+    // CHANGED: IdentityResult → AuthResult
     public async Task<AuthResult> CreateUserAsync(string email, string password, string? phoneNumber = null)
     {
         var user = new ApplicationUser
@@ -40,27 +31,22 @@ public class IdentityService : IIdentityService
         var result = await _userManager.CreateAsync(user, password);
 
         if (result.Succeeded)
-        {
             return AuthResult.Success();
-        }
 
         return AuthResult.Failed(result.Errors.Select(e => e.Description).ToArray());
     }
 
+    // CHANGED: IdentityResult → AuthResult
     public async Task<AuthResult> CheckPasswordAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
-        {
             return AuthResult.Failed("Invalid email or password");
-        }
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: true);
 
         if (result.Succeeded)
-        {
             return AuthResult.Success();
-        }
 
         return AuthResult.Failed("Invalid email or password");
     }
@@ -73,20 +59,17 @@ public class IdentityService : IIdentityService
         return await _userManager.GetRolesAsync(user);
     }
 
+    // CHANGED: IdentityResult → AuthResult
     public async Task<AuthResult> AddToRoleAsync(string userId, string role)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-        {
             return AuthResult.Failed("User not found");
-        }
 
         var result = await _userManager.AddToRoleAsync(user, role);
 
         if (result.Succeeded)
-        {
             return AuthResult.Success();
-        }
 
         return AuthResult.Failed(result.Errors.Select(e => e.Description).ToArray());
     }
@@ -115,20 +98,5 @@ public class IdentityService : IIdentityService
             CompanyId = user.CompanyId,
             IsActive = user.IsActive
         };
-    }
-
-    Task<AuthResult> IIdentityService.CreateUserAsync(string email, string password, string? phoneNumber)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<AuthResult> IIdentityService.CheckPasswordAsync(string email, string password)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<AuthResult> IIdentityService.AddToRoleAsync(string userId, string role)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -24,15 +24,17 @@ public class AuthService : IAuthService
     private readonly IIdentityService _identityService;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IEmployeeRepository _employeeRepository;
-
+    private readonly ICompanyRepository _companyRepository;
     public AuthService(
         IIdentityService identityService,
         IJwtTokenService jwtTokenService,
-        IEmployeeRepository employeeRepository)
+        IEmployeeRepository employeeRepository,
+        ICompanyRepository companyRepository)
     {
         _identityService = identityService;
         _jwtTokenService = jwtTokenService;
         _employeeRepository = employeeRepository;
+        _companyRepository = companyRepository;
     }
 
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
@@ -110,11 +112,35 @@ public class AuthService : IAuthService
         // Assign default role
         await _identityService.AddToRoleAsync(user.Id, UserRole.Employee.ToString());
 
+        // CREATE COMPANY
+        Guid companyId;
+        if (!string.IsNullOrWhiteSpace(request.CompanyName))
+        {
+            var company = new Company
+            {
+                Id = Guid.NewGuid(),
+                CompanyCode = GenerateCompanyCode(request.CompanyName), // NEW
+                Name = request.CompanyName,
+                Email = request.Email,
+                IsActive = true
+            };
+
+            await _companyRepository.CreateAsync(company);
+            companyId = company.Id;
+        }
+        else
+        {
+            throw new InvalidOperationException("Company name is required for registration");
+        }
+
+        Console.WriteLine($"Creating employee with UserId: {user.Id}, CompanyId: {companyId}");
+
         // Create Employee record
         var employee = new Employee
         {
             Id = Guid.NewGuid(),
             UserId = user.Id,
+            CompanyId = companyId,
             FullName = request.FullName,
             Email = request.Email,
             Role = UserRole.Employee,
@@ -158,5 +184,24 @@ public class AuthService : IAuthService
     public Task LogoutAsync(string userId)
     {
         return Task.CompletedTask;
+    }
+
+
+
+
+    private static string GenerateCompanyCode(string companyName)
+    {
+        var prefix = new string(companyName
+            .Split(' ')
+            .Select(w => char.ToUpper(w[0]))
+            .Take(3)
+            .ToArray());
+
+        if (prefix.Length < 2) prefix = companyName[..Math.Min(3, companyName.Length)].ToUpper();
+
+        var random = new Random();
+        var suffix = random.Next(1000, 9999).ToString();
+
+        return $"{prefix}-{suffix}";
     }
 }

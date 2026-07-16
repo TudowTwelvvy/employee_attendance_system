@@ -11,6 +11,11 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         // Primary key
         builder.HasKey(c => c.Id);
 
+        builder.Property(c => c.CompanyCode)
+            .IsRequired()
+            .HasMaxLength(20);
+
+
         // Property configurations
         builder.Property(c => c.Name)
             .IsRequired()                    // NOT NULL
@@ -45,6 +50,8 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         // Indexes
         builder.HasIndex(c => c.Email)
             .IsUnique();                     // No duplicate emails
+        builder.HasIndex(c => c.CompanyCode)
+            .IsUnique();
 
         // Table name (optional — defaults to class name)
         builder.ToTable("Companies");

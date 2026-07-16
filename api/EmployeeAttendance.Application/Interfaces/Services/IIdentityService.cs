@@ -1,6 +1,5 @@
 namespace EmployeeAttendance.Application.Interfaces.Services;
 
-
 public interface IIdentityService
 {
     Task<AuthResult> CreateUserAsync(string email, string password, string? phoneNumber = null);

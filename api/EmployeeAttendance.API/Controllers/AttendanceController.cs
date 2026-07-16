@@ -33,7 +33,7 @@ public class AttendanceController : ControllerBase
     /// Returns: { id, scanTime, status, message }
     /// </summary>
     [HttpPost("submit")]
-    public async Task<IActionResult> SubmitAttendance([FromBody] SubmitAttendanceDto request)
+    public async Task<IActionResult> SubmitAttendance([FromBody] SubmitAttendanceDto requestDto)
     {
         // Extract user ID from JWT token claims
         //ASP.NET Core populates User with the claims from the token. NameIdentifier is the claim that contains the user ID (we set it as sub in the JWT payload).
@@ -44,7 +44,7 @@ public class AttendanceController : ControllerBase
             return Unauthorized(new { message = "User not authenticated" });
         }
 
-        var response = await _attendanceService.SubmitAttendanceAsync(request, userId);
+        var response = await _attendanceService.SubmitAttendanceAsync(requestDto, userId);
         return Ok(response);
     }
 
